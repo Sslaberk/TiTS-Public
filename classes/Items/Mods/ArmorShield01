@@ -1,0 +1,56 @@
+package classes.Items.Mods
+{
+   import classes.Characters.PlayerCharacter;
+   import classes.Creature;
+   import classes.GLOBAL;
+   import classes.GameData.TooltipManager;
+   import classes.ItemSlotClass;
+   import classes.StringUtil;
+   
+   public class ClearYu extends ItemSlotClass
+   {
+       
+      
+      public function ArmorShield01()
+      {
+         super();
+         _latestVersion = 0;
+         quantity = Number(Number(1));
+         stackSize = 10;
+         type = GLOBAL.PILL;
+         shortName = "Mod A.S.MKI";
+         longName = "Armor Shiled MKI";
+         TooltipManager.addFullName(shortName,StringUtil.toTitleCase(longName));
+         description = "A kit that will modify your armor to make it passively generate some Shield.";
+         tooltip = A small kit containing adaptable nanomachines that will modify your current armor to make it passively generate 10 more Shield Points.\n\n<b>WARNING: Only one mod per Equipment piece, Cannot be Revomed.</b>";
+         TooltipManager.addTooltip(shortName,tooltip);
+         attackVerb = "";
+         basePrice = Number(Number(5000));
+         version = int(int(_latestVersion));
+      }
+      
+      override public function useFunction(target:Creature, usingCreature:Creature = null) : Boolean
+      {
+         kGAMECLASS.clearOutput();
+         if(target is PlayerCharacter)  {
+            if(target.armor is EmptySlot) {
+               output("You open the kitthen then remember you are not wearing any armor to use it on!\n\nYou close the kit and put it away.");
+               //return kit to player?
+               return false;
+            }
+			if(!this.pc.armor.hasFlag(GLOBAL.ITEM_FLAG_MODDED))  {
+			   output("You open the kit then remember your armor is already modified!\n\nYou close the kit and put it away.");
+               //return kit to player?
+               return false;
+			}
+           output("Opening the kit, you throw the nanobots into your armor.\n\nAlmost immediately you start felling tingles all over the parts of your body covered in it.");
+		   
+           target.armor.hasRandomProperties = true;
+           target.armor.shields = target.armor.shields + 10;
+		   //Possibly use flag value to return last mod to player and make possible to switch mods
+		   target.armor.addFlag(GLOBAL.ITEM_FLAG_MODDED);            
+         }
+         return false;
+      }
+   }
+}
